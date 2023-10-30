@@ -1,7 +1,7 @@
-# divulge
-[![CMake](https://github.com/grzegorz-grzeda/divulge/actions/workflows/cmake.yml/badge.svg)](https://github.com/grzegorz-grzeda/divulge/actions/workflows/cmake.yml)
+# stream-server
+[![CMake](https://github.com/grzegorz-grzeda/stream-server/actions/workflows/cmake.yml/badge.svg)](https://github.com/grzegorz-grzeda/stream-server/actions/workflows/cmake.yml)
 
-Small HTTP router in C.
+Small HTTP server in C.
 
 This is a [G2EPM](https://github.com/grzegorz-grzeda/g2epm) library.
 
