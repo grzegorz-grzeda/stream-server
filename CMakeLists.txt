@@ -30,8 +30,9 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     include(${CMAKE_CURRENT_LIST_DIR}/lib/atomic-tests/cmake/atomic-tests.cmake)
     add_subdirectory(lib/containers)
     add_subdirectory(lib/g2labs-log)
+    add_subdirectory(lib/audit)
 endif()
 
 add_subdirectory(source)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE g2labs-log containers)
+target_link_libraries(${PROJECT_NAME} PRIVATE g2labs-log containers audit)

@@ -36,16 +36,9 @@
 #include <unistd.h>
 #define G2LABS_LOG_MODULE_LEVEL G2LABS_LOG_MODULE_LEVEL_INFO
 #define G2LABS_LOG_MODULE_NAME "stream-server"
+#include "audit.h"
 #include "dynamic-queue.h"
 #include "g2labs-log.h"
-
-#define CHECK_IF_INVALID(x, msg) \
-    do {                         \
-        if ((x) < 0) {           \
-            E(msg);              \
-            exit(-1);            \
-        }                        \
-    } while (0)
 
 typedef struct stream_server {
     pthread_t* thread_pool;
@@ -98,10 +91,10 @@ stream_server_t* stream_server_create(uint16_t port,
     }
 
     server->socket_fd = socket(AF_INET, SOCK_STREAM, 0);
-    CHECK_IF_INVALID(server->socket_fd, "Could not create a new socket");
+    AUDIT(server->socket_fd != -1, "Could not create a new socket");
     int true_value = 1;
     int status = setsockopt(server->socket_fd, SOL_SOCKET, SO_REUSEADDR, &true_value, sizeof(int));
-    CHECK_IF_INVALID(status, "Could not set socket options");
+    AUDIT(status == 0, "Could not set socket options");
 
     struct sockaddr_in serv_addr;
     memset(&serv_addr, '0', sizeof(serv_addr));
@@ -110,10 +103,10 @@ stream_server_t* stream_server_create(uint16_t port,
     serv_addr.sin_port = htons(port);
 
     status = bind(server->socket_fd, (struct sockaddr*)&serv_addr, sizeof(serv_addr));
-    CHECK_IF_INVALID(status, "Could not bind to port");
+    AUDIT(status != -1, "Could not bind to port");
 
     status = listen(server->socket_fd, max_waiting_connections);
-    CHECK_IF_INVALID(status, "Could not listen");
+    AUDIT(status == 0, "Could not listen");
     return server;
 }
 
@@ -148,7 +141,7 @@ void stream_server_loop(stream_server_t* server) {
         return;
     }
     int connection_fd = accept(server->socket_fd, (struct sockaddr*)NULL, NULL);
-    CHECK_IF_INVALID(connection_fd, "Could not accept a connection");
+    AUDIT(connection_fd != -1, "Could not accept a connection");
     stream_server_connection_t* connection = calloc(1, sizeof(stream_server_connection_t));
     connection->id = connection_fd;
     pthread_mutex_lock(&server->mutex);
